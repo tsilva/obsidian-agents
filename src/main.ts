@@ -3,12 +3,12 @@ import { execFile } from "child_process";
 
 interface ObsidianAgentsSettings {
   terminalApp: "terminal" | "iterm2";
-  claudeCommand: string;
+  agentCommand: string;
 }
 
 const DEFAULT_SETTINGS: ObsidianAgentsSettings = {
   terminalApp: "terminal",
-  claudeCommand: "claude",
+  agentCommand: "claude",
 };
 
 export default class ObsidianAgentsPlugin extends Plugin {
@@ -21,9 +21,9 @@ export default class ObsidianAgentsPlugin extends Plugin {
       this.app.workspace.on("file-menu", (menu: Menu, file: TAbstractFile) => {
         menu.addItem((item) => {
           item
-            .setTitle("Open with Claude Code")
+            .setTitle("Open with AI Agent")
             .setIcon("terminal")
-            .onClick(() => this.launchClaude(file));
+            .onClick(() => this.launchAgent(file));
         });
       })
     );
@@ -36,7 +36,7 @@ export default class ObsidianAgentsPlugin extends Plugin {
     return adapter.basePath ?? null;
   }
 
-  private launchClaude(file: TAbstractFile) {
+  private launchAgent(file: TAbstractFile) {
     const basePath = this.getVaultBasePath();
     if (!basePath) {
       new Notice("Could not determine vault path");
@@ -60,8 +60,8 @@ export default class ObsidianAgentsPlugin extends Plugin {
       return;
     }
 
-    const claudeCmd = this.settings.claudeCommand;
-    const command = `cd ${this.shellQuote(cwd)} && ${claudeCmd}${args}`;
+    const agentCmd = this.settings.agentCommand;
+    const command = `cd ${this.shellQuote(cwd)} && ${agentCmd}${args}`;
 
     let script: string;
     if (this.settings.terminalApp === "iterm2") {
@@ -122,7 +122,7 @@ class ObsidianAgentsSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Terminal application")
-      .setDesc("Which terminal to open Claude Code in")
+      .setDesc("Which terminal to open the AI agent in")
       .addDropdown((dropdown) =>
         dropdown
           .addOption("terminal", "Terminal.app")
@@ -135,14 +135,14 @@ class ObsidianAgentsSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Claude command")
-      .setDesc("Path to the Claude CLI executable")
+      .setName("Agent command")
+      .setDesc("Command to launch the AI agent (e.g., claude, codex)")
       .addText((text) =>
         text
           .setPlaceholder("claude")
-          .setValue(this.plugin.settings.claudeCommand)
+          .setValue(this.plugin.settings.agentCommand)
           .onChange(async (value) => {
-            this.plugin.settings.claudeCommand = value || "claude";
+            this.plugin.settings.agentCommand = value || "claude";
             await this.plugin.saveSettings();
           })
       );

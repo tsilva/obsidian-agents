@@ -187,12 +187,60 @@ else
     echo "   ✅ Plugin linked to vault"
 fi
 
+# Enable plugin in community-plugins.json
+echo ""
+echo "🔧 Enabling plugin in Obsidian..."
+
+COMMUNITY_PLUGINS_FILE="$SELECTED_VAULT/.obsidian/community-plugins.json"
+PLUGIN_ID="obsidian-agents"
+
+if [[ -f "$COMMUNITY_PLUGINS_FILE" ]]; then
+    if command -v jq &>/dev/null; then
+        # Use jq to add plugin ID if not present
+        if ! jq -e "index(\"$PLUGIN_ID\")" "$COMMUNITY_PLUGINS_FILE" &>/dev/null; then
+            jq --arg id "$PLUGIN_ID" '. + [$id]' "$COMMUNITY_PLUGINS_FILE" > "$COMMUNITY_PLUGINS_FILE.tmp" && mv "$COMMUNITY_PLUGINS_FILE.tmp" "$COMMUNITY_PLUGINS_FILE"
+            echo "   ✅ Plugin added to community-plugins.json"
+        else
+            echo "   ✅ Plugin already enabled in community-plugins.json"
+        fi
+    elif command -v python3 &>/dev/null; then
+        # Use python3 fallback
+        python3 -c "
+import json
+import sys
+
+try:
+    with open('$COMMUNITY_PLUGINS_FILE', 'r') as f:
+        plugins = json.load(f)
+    
+    if '$PLUGIN_ID' not in plugins:
+        plugins.append('$PLUGIN_ID')
+        with open('$COMMUNITY_PLUGINS_FILE', 'w') as f:
+            json.dump(plugins, f, indent=2)
+        print('   ✅ Plugin added to community-plugins.json')
+    else:
+        print('   ✅ Plugin already enabled in community-plugins.json')
+except Exception as e:
+    print(f'   ⚠️  Could not update community-plugins.json: {e}')
+    sys.exit(1)
+"
+    else
+        echo "   ⚠️  Could not auto-enable plugin (jq or python3 required)"
+        echo "   Manual step: Add 'obsidian-agents' to $COMMUNITY_PLUGINS_FILE"
+    fi
+else
+    # Create the file if it doesn't exist
+    echo "[\"$PLUGIN_ID\"]" > "$COMMUNITY_PLUGINS_FILE"
+    echo "   ✅ Created community-plugins.json with plugin enabled"
+fi
+
 echo ""
 echo "🎉 Installation complete!"
 echo ""
 echo "Next steps:"
-echo "   1. Open Obsidian"
-echo "   2. Go to Settings → Community Plugins"
-echo "   3. Enable 'Obsidian Agents'"
-echo "   4. Right-click any file or folder → 'Open with Claude Code'"
+echo "   1. Reload Obsidian (CMD+Shift+P → 'Reload app without saving')"
+echo "   2. Check Settings → Community Plugins — 'Obsidian Agents' should appear enabled"
+echo "   3. Right-click any file or folder → 'Open with Claude Code'"
+echo ""
+echo "⚠️  First-time setup: Grant terminal permissions in System Settings → Privacy & Security → Automation → Obsidian"
 echo ""
