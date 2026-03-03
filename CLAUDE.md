@@ -8,8 +8,11 @@ An Obsidian community plugin (ID: `agents`) that launches AI agents from your va
 
 - Plugin ID: `agents` (no "obsidian" in ID/name — required by community plugin validator)
 - Entry point: `src/main.ts`
-- Build: `npm run build` (runs tsc + esbuild)
-- Release: push a semver tag (e.g., `git tag 1.0.0 && git push origin 1.0.0`) to trigger the GitHub Actions release workflow
+- Build: `make build` (runs tsc + esbuild)
+- Dev: `make dev` (watch mode)
+- Install to vault: `make install`
+- Release: `make bump-patch` / `make bump-minor` / `make bump-major` (bumps version, commits, tags, pushes — triggers GitHub Actions release)
+- If version was already bumped manually: `make release` (just pushes commit + tag)
 
 ## Maintenance
 
