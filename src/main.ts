@@ -131,6 +131,7 @@ class ObsidianAgentsSettingTab extends PluginSettingTab {
       .addDropdown((dropdown) =>
         dropdown
           .addOption("terminal", "Terminal.app")
+          // eslint-disable-next-line obsidianmd/ui/sentence-case
           .addOption("iterm2", "iTerm 2")
           .setValue(this.plugin.settings.terminalApp)
           .onChange(async (value) => {
@@ -144,7 +145,7 @@ class ObsidianAgentsSettingTab extends PluginSettingTab {
       .setDesc("Command to launch the agent (e.g., claude, codex)")
       .addText((text) =>
         text
-          .setPlaceholder("claude")
+          .setPlaceholder("Claude")
           .setValue(this.plugin.settings.agentCommand)
           .onChange(async (value) => {
             this.plugin.settings.agentCommand = value || "claude";
