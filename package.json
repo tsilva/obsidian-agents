@@ -2,8 +2,10 @@
   "name": "obsidian-agents",
   "version": "1.0.0",
   "description": "Launch Claude Code from your Obsidian vault",
+  "packageManager": "pnpm@10.27.0",
   "main": "main.js",
   "scripts": {
+    "preinstall": "node -e \"const ua = process.env.npm_config_user_agent || ''; if (!ua.startsWith('pnpm/')) { console.error('Use pnpm for this repo.'); process.exit(1); }\"",
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "version": "node version-bump.mjs && git add manifest.json versions.json",

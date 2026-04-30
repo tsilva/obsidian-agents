@@ -1,99 +1,54 @@
 <div align="center">
-  <img src="logo.png" alt="Agents" width="512"/>
+  <img src="https://raw.githubusercontent.com/tsilva/obsidian-agents-plugin/main/logo.png" alt="Agents" width="180" />
 
   # Agents
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-  [![Obsidian](https://img.shields.io/badge/Obsidian-plugin-7c3aed.svg)](https://obsidian.md)
-  [![macOS Only](https://img.shields.io/badge/platform-macOS-blue.svg)]()
-
-  🚀 Launch AI agents from your vault — right-click any file or folder to open a terminal with context 🤖
-
+  **🚀 Launch AI agents from your vault — right-click any file or folder to open a terminal with context 🤖**
 </div>
 
-> [!IMPORTANT]
-> **macOS only.** This plugin uses AppleScript to launch terminal windows and is not compatible with Windows or Linux.
+Agents is a macOS-only Obsidian plugin that adds an **Open with agent** action to the file explorer context menu. Right-click a note or folder and it opens your configured AI CLI in Terminal.app or iTerm2, already pointed at the right vault location.
 
-## Overview
+Files launch the agent from the parent folder with a short file-context prompt. Folders launch the agent directly in that folder.
 
-**The Pain:** Switching between Obsidian and the terminal to work with AI agents breaks your flow. You have to navigate to the right directory, remember file paths, and manually set up context.
+## Install
 
-**The Solution:** Agents adds right-click context menu items directly in Obsidian. Click any file or folder to instantly launch your AI agent in a terminal, already pointed at the right path.
+From Obsidian, install **Agents** in **Settings -> Community Plugins -> Browse**, then enable it.
 
-**The Result:** Zero context-switching — go from reading notes to AI-assisted coding in one click.
+For local development:
 
-## Features
+```bash
+git clone https://github.com/tsilva/obsidian-agents-plugin.git
+cd obsidian-agents-plugin
+pnpm install
+pnpm run build
+pnpm run install-plugin
+```
 
-- ⚡ **One-click launch** — right-click any file or folder to open your configured AI agent
-- 📁 **Smart context** — files open your agent with the file path pre-loaded; folders open the agent in that directory
-- 🖥️ **Terminal choice** — supports Terminal.app and iTerm2
-- ⚙️ **Configurable** — customize the agent command and terminal app in settings
+Reload Obsidian, then right-click a file or folder in the file explorer and choose **Open with agent**.
 
-## Quick Start
+## Commands
 
-### Install from Community Plugins
+```bash
+pnpm install             # install dependencies
+pnpm run dev             # watch-build main.js during development
+pnpm run build           # type-check and build the production plugin
+pnpm run install-plugin  # build if needed, symlink into a vault, and enable the plugin
+pnpm run version         # sync package version into manifest.json and versions.json
+```
 
-1. Open **Settings → Community Plugins → Browse**
-2. Search for **"Agents"**
-3. Click **Install**, then **Enable**
-4. Right-click any file or folder in the file explorer → **Open with AI Agent**
+## Notes
 
-### First-Time Setup (Important!)
+- macOS desktop only. The plugin exits early on non-Darwin platforms.
+- Obsidian v1.0.0 or newer is required by `manifest.json`.
+- The default agent command is `claude`; settings can change it to another CLI such as `codex`.
+- Terminal.app is the default terminal. The settings toggle switches launches to iTerm2.
+- The first launch may require macOS Automation permission for Obsidian to control Terminal.app or iTerm2.
+- `pnpm` is the expected package manager for this repo.
+- The plugin runs locally through AppleScript and `osascript`; it does not use a backend service.
 
-The first time you use the plugin, macOS will block it with error **-1743** (permission denied). You must grant Obsidian permission to control your terminal:
+## Architecture
 
-1. Open **System Settings → Privacy & Security → Automation**
-2. Find **Obsidian** in the list
-3. Enable the checkbox next to **Terminal** (or **iTerm2** if using that)
-4. Try right-clicking again in Obsidian — it should now work
-
-> 💡 **Tip:** If you don't see the permission prompt, manually trigger the error once by right-clicking a file and selecting "Open with AI Agent", then check System Settings.
-
-## How It Works
-
-- **Right-click a file** → Opens a terminal in the file's parent directory with your AI agent and the file path pre-loaded
-- **Right-click a folder** → Opens a terminal in that folder with your AI agent ready to go
-
-The plugin uses AppleScript to launch your preferred terminal emulator.
-
-## Settings
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Terminal App | Terminal.app | Choose between Terminal.app and iTerm2 |
-| Agent Command | `claude` | Command to launch the AI agent (e.g., `claude`, `codex`) |
-
-## Requirements
-
-- macOS (desktop only)
-- An AI agent CLI installed (e.g., [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex](https://github.com/openai/codex), etc.)
-- Obsidian v1.0.0+
-
-## Development
-
-### Automated Install
-
-1. Clone and install:
-   ```bash
-   git clone https://github.com/tsilva/obsidian-agents.git
-   cd obsidian-agents
-   npm install
-   bash install.sh
-   ```
-
-2. Enable the plugin in Obsidian: **Settings → Community Plugins → Agents**
-
-### Manual Install
-
-1. Clone this repo into your vault's plugin directory:
-   ```bash
-   cd /path/to/vault/.obsidian/plugins
-   git clone https://github.com/tsilva/obsidian-agents.git agents
-   cd agents
-   npm install && npm run build
-   ```
-
-2. Enable the plugin in Obsidian: **Settings → Community Plugins → Agents**
+![Agents architecture diagram](./architecture.png)
 
 ## License
 
